@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style> 
+		* {
+    margin: 0;
+    padding: 0;
+    font-family: Comic Sans MS;
+}
+
+body {
+    background-color: rgb(40,40,40);
+    overflow: hidden;
+}
+
+section.main {
+}
+
+section.main .container {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 15vh 80vh;
+    align-items: center;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+section.main table {
+    border-collapse: collapse;
+    user-select: none;
+    color: white;
+    font-size: 2rem;
+}
+
+section.main table td {
+    /* height: 25vh;
+    width: 25vh; */
+    height: 150px;
+    width: 150px;
+    border: solid 4px white;
+    cursor: pointer;
+    font-size: 2rem;
+}
+
+section.main table tr:first-child td {
+    border-top: none;
+}
+
+section.main table tr:last-child td {
+    border-bottom: none;
+}
+
+section.main table tr td:first-child {
+    border-left: none;
+}
+
+section.main table tr td:last-child {
+    border-right: none;
+}
+
+section.main .turn {
+    font-size: 1.5rem;
+    color: white;
+}
+
+section.main .turn span {
+    padding: 5px 30px;
+}
+
+section.main .turn span:first-child {
+    background-color: white;
+    color: black;
+}
+
+section.main .end {
+    display: none;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: rgb(0, 0, 0, .9);
+    color: white;
+}
+
+section.main .end .box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 70vw;
+    min-height: 25vh;
+    text-align: center;
+}
+
+section.main .end .box p {
+    font-size: 3rem;
+}
+
+section.main .end .box button {
+    padding: 10px 0;
+    border: solid 2px rgba(231, 76, 60,1.0);
+    font-size: 1rem;
+    background-color: transparent;
+    color: white;
+    cursor: pointer;
+    outline: none;
+    transition: .5s transform;
+    width: 30vw;
+    margin: auto;
+}
+
+section.main .end .box button:active {
+    transform: translate(5px, 5px);
+}
+
+
+@media (max-width: 760px) {
+    html {
+        font-size: 12px;
+    }
+
+    section.main table td {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+	</style>
+</head>
+<body>
+    
+    <section class="main">
+        <div class="container">
+
+            <div class="turn">
+                <p><span>X</span> <span>O</span></p>
+            </div>
+
+            <table>
+                <tr>
+                    <td id="0"></td>
+                    <td id="1"></td>
+                    <td id="2"></td>
+                </tr>
+                <tr>
+
+                    <td id="3"></td>
+                    <td id="4"></td>
+                    <td id="5"></td>
+                </tr>
+
+                <tr>
+                    <td id="6"></td>
+                    <td id="7"></td>
+                    <td id="8"></td>
+                </tr>
+            </table>
+
+            <div class="end">
+                <div class="box">
+                    <p class="winner"></p>
+                    <button id="restart">Restart</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <script>
+		//Getting BLocks
+let td = document.getElementsByTagName('td');
+
+// Win Combinations
+let win = [
+    "012",
+    "345",
+    "678",
+    "036",
+    "147",
+    "258",
+    "048",
+    "246"
+];
+
+let pos = {
+    'O' : '',
+    'X' : ''
+}
+
+let play = 1; //Play Count
+let freeSpots = 9;
+
+for(let i = 0; i < td.length; i++) {
+    td[i].addEventListener('click', function(x) {
+        let id = x.target.id;
+
+        if(this.innerHTML) return false;
+
+        play++;
+        freeSpots--;
+
+        let action = (player, char) => {
+            player[char] += id;
+            player[char] = player[char].split('').sort().join('');
+
+            if(player[char].length < 3) return false;
+
+            for(let a = 0; a < win.length; a++) {
+                if(!player[char].includes(win[a][0])) continue;
+                if(!player[char].includes(win[a][1])) continue;
+                if(!player[char].includes(win[a][2])) continue;
+
+                document.getElementsByClassName('end')[0].style.display = 'flex';
+                document.getElementsByClassName('winner')[0].innerHTML = char + ' WON';
+                return true;
+            }
+        }
+
+        if(!freeSpots) {
+            document.getElementsByClassName('end')[0].style.display = 'flex';
+            document.getElementsByClassName('winner')[0].innerHTML = 'Tie';
+        }
+
+
+        let change = (first, second) => {
+            first.style.backgroundColor = "white";
+            first.style.color = "black";
+            second.style.backgroundColor = "rgb(40,40,40)";
+            second.style.color = "white";
+        }
+
+        let spans = document.getElementsByTagName('span');
+
+        if(play%2 == 1) {
+            this.innerHTML = 'O';
+            action(pos, 'O');
+            change(spans[0], spans[1]);
+        } else {
+            this.innerHTML = 'X';
+            action(pos, 'X');
+            change(spans[1], spans[0]);
+        }
+    });
+}
+
+document.getElementById('restart').addEventListener('click', () => { location.reload() })
+	</script>
+</body>
+</html>
